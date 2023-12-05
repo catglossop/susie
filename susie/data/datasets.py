@@ -44,8 +44,19 @@ class Transforms:
     @staticmethod
     def somethingsomething(x: Dict[str, Any]) -> Dict[str, Any]:
         return x
+    
+    @staticmethod
+    def sacson(x: Dict[str, Any]) -> Dict[str, Any]:
+        x["obs"] = np.vstack((x["obs_image"], x["goal_image"]))
+        breakpoint()
+        x["lang"] = x["lang"]
 
+        del x["actions"]
+        del x["action_mask"]
+        del x["goal_pos"]
+        del x["dataset_index"]
 
+        return x 
 class GetPaths:
     """Retrieves paths to TFRecord files or each dataset"""
 
@@ -62,6 +73,10 @@ class GetPaths:
         return f"{data_path}/{'train' if train else 'val'}"
 
     @staticmethod
+    def sacson(data_path: str, train: bool) -> List[str]:
+        return f"{data_path}/{'train' if train else 'val'}"
+
+    @staticmethod
     def calvin(data_path: str, train: bool) -> List[str]:
         if train:
             return (
@@ -71,6 +86,7 @@ class GetPaths:
             )
         else:
             return tf.io.gfile.glob(f"{data_path}/validation/D/*")
+    
 
 
 def make_dataset(

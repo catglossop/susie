@@ -69,7 +69,7 @@ def base():
     config.data.batch_size = 128
 
     data_base = ConfigDict()
-    data_base.image_size = 256
+    data_base.image_size = 128
     data_base.shuffle_buffer_size = 100000
     data_base.augment_kwargs = dict(
         random_resized_crop=dict(scale=[0.85, 1.0], ratio=[0.95, 1.05]),
@@ -98,11 +98,20 @@ def base():
     #     truncate=True,
     # )
 
-    config.data.bridge = bridge = deepcopy(data_base)
-    bridge.weight = 45.0
-    bridge.data_path = ""
-    bridge.goal_relabeling_fn = "subgoal_only"
-    bridge.goal_relabeling_kwargs = dict(
+    # config.data.bridge = bridge = deepcopy(data_base)
+    # bridge.weight = 45.0
+    # bridge.data_path = ""
+    # bridge.goal_relabeling_fn = "subgoal_only"
+    # bridge.goal_relabeling_kwargs = dict(
+    #     subgoal_delta=(11, 14),
+    #     truncate=False,
+    # )
+
+    config.data.sacson = sacson = deepcopy(data_base)
+    sacson.weight = 100.0
+    sacson.data_path = "gs://sacson_data/sacson_tf"
+    sacson.goal_relabeling_fn = "subgoal_only"
+    sacson.goal_relabeling_kwargs = dict(
         subgoal_delta=(11, 14),
         truncate=False,
     )
@@ -116,18 +125,18 @@ def base():
     #     truncate=False,
     # )
 
-    config.data.somethingsomething = somethingsomething = deepcopy(data_base)
-    somethingsomething.weight = 75.0
-    somethingsomething.data_path = ""
-    somethingsomething.goal_relabeling_fn = "subgoal_only"
-    somethingsomething.goal_relabeling_kwargs = dict(
-        subgoal_delta=(11, 14),
-        truncate=False,
-    )
+    # config.data.somethingsomething = somethingsomething = deepcopy(data_base)
+    # somethingsomething.weight = 75.0
+    # somethingsomething.data_path = ""
+    # somethingsomething.goal_relabeling_fn = "subgoal_only"
+    # somethingsomething.goal_relabeling_kwargs = dict(
+    #     subgoal_delta=(11, 14),
+    #     truncate=False,
+    # )
 
     # model
     config.model = model = ConfigDict()
-    config.model.pretrained = "kvablack/instruct-pix2pix-flax"
+    config.model.pretrained = "instruct-pix2pix"
 
     return config
 
