@@ -9,8 +9,8 @@ def base():
     # top-level stuff
     config.seed = 42
     config.wandb_project = "susie"
-    config.run_name = ""
-    config.logdir = "logs"
+    config.run_name = "susie-sacson"
+    config.logdir = "/nfs/nfs2/users/cglossop/logs"
     config.num_steps = 40000
     config.log_interval = 100
     config.save_interval = 5000
