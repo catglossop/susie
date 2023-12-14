@@ -52,7 +52,6 @@ try:
 except ImportError:
     pass
 
-
 def fsdp_sharding(mesh: jax.sharding.Mesh, array: jax.ShapeDtypeStruct):
     if array.ndim < 2:
         # replicate scalar and vector arrays
@@ -88,7 +87,6 @@ def train_step(
     eval_only=False,
 ):
     batch_size = batch["subgoals"].shape[0]
-
     # encode stuff
     for key in {"curr", "goals", "subgoals"}.intersection(batch.keys()):
         # VERY IMPORTANT: for some godforsaken reason, the context latents are
@@ -125,7 +123,7 @@ def train_step(
             uncond_prompt_embed,
             prompt_embeds,
         )
-
+    breakpoint()
     x = batch["subgoals"]  # the generation target
     y = jnp.concatenate(
         [batch["curr"], batch["goals"]], axis=-1
@@ -145,7 +143,6 @@ def train_step(
     x_t = sampling.q_sample(x, log_snr, noise)
 
     input = jnp.concatenate([x_t, y], axis=-1)
-
     # seems like remat is actually enabled by default -- this disables it
     # @partial(jax.checkpoint, policy=jax.checkpoint_policies.everything_saveable)
     def loss_fn(params, rng):
@@ -475,7 +472,6 @@ def main(_):
     pbar = tqdm(range(start_step, config.num_steps))
     for step in pbar:
         batch = next(train_loader)
-
         rng, train_step_rng = jax.random.split(rng)
         state, info = train_step_jit(train_step_rng, state, batch)
         pbar.set_postfix_str(f"loss: {info['loss']:.6f}")

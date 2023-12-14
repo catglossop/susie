@@ -47,15 +47,8 @@ class Transforms:
     
     @staticmethod
     def sacson(x: Dict[str, Any]) -> Dict[str, Any]:
-        x["obs"] = np.vstack((x["obs_image"], x["goal_image"]))
-        breakpoint()
+        x["obs"] = x["obs"]
         x["lang"] = x["lang"]
-
-        del x["actions"]
-        del x["action_mask"]
-        del x["goal_pos"]
-        del x["dataset_index"]
-
         return x 
 class GetPaths:
     """Retrieves paths to TFRecord files or each dataset"""

@@ -1,0 +1,166 @@
+wandb_version: 1
+
+curr_drop_rate:
+  desc: null
+  value: 0.0
+data:
+  desc: null
+  value:
+    batch_size: 128
+    sacson:
+      augment_kwargs:
+        augment_order: []
+        random_brightness:
+        - 0.05
+        random_contrast:
+        - 0.95
+        - 1.05
+        random_hue:
+        - 0.025
+        random_resized_crop:
+          ratio:
+          - 0.95
+          - 1.05
+          scale:
+          - 0.85
+          - 1.0
+        random_saturation:
+        - 0.95
+        - 1.05
+      data_path: gs://sacson_data_central1/sacson_tf
+      goal_relabeling_fn: subgoal_only
+      goal_relabeling_kwargs:
+        subgoal_delta:
+        - 11
+        - 14
+        truncate: false
+      image_size: 128
+      shuffle_buffer_size: 100000
+      weight: 100.0
+ema:
+  desc: null
+  value:
+    inv_gamma: 1.0
+    max_decay: 0.999
+    min_decay: 0.999
+    power: 0.75
+    start_step: 0
+    update_every: 1
+goal_drop_rate:
+  desc: null
+  value: 1.0
+log_interval:
+  desc: null
+  value: 100
+logdir:
+  desc: null
+  value: /nfs/nfs1/users/cglossop/logs
+mesh:
+  desc: null
+  value:
+  - -1
+  - 1
+model:
+  desc: null
+  value:
+    pretrained: kvablack/instruct-pix2pix-flax
+num_steps:
+  desc: null
+  value: 40000
+num_val_batches:
+  desc: null
+  value: 128
+optim:
+  desc: null
+  value:
+    accumulation_steps: 1
+    beta1: 0.9
+    beta2: 0.999
+    decay_steps: 1000000000.0
+    epsilon: 1.0e-08
+    lr: 0.0001
+    max_grad_norm: 1.0
+    optimizer: adamw
+    warmup_steps: 800
+    weight_decay: 0.01
+prompt_drop_rate:
+  desc: null
+  value: 0.0
+run_name:
+  desc: null
+  value: susie-sacson_2023.12.06_00.05.54
+sample:
+  desc: null
+  value:
+    context_w: 2.5
+    eta: 0.0
+    num_contexts: 8
+    num_samples_per_context: 8
+    num_steps: 50
+    prompt_w: 7.5
+sample_interval:
+  desc: null
+  value: 2500
+save_interval:
+  desc: null
+  value: 5000
+scheduling:
+  desc: null
+  value:
+    noise_schedule: scaled_linear
+seed:
+  desc: null
+  value: 42
+text_encoder:
+  desc: null
+  value: runwayml/stable-diffusion-v1-5:flax
+vae:
+  desc: null
+  value: runwayml/stable-diffusion-v1-5:flax
+val_interval:
+  desc: null
+  value: 2500
+wandb_project:
+  desc: null
+  value: susie
+wandb_resume_id:
+  desc: null
+  value: null
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.13
+    cli_version: 0.15.5
+    framework: huggingface
+    huggingface_version: 4.33.1
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1701821158.372799
+    t:
+      1:
+      - 2
+      - 3
+      - 11
+      - 12
+      - 45
+      - 49
+      - 55
+      - 83
+      2:
+      - 2
+      - 3
+      - 11
+      - 12
+      - 45
+      - 49
+      - 55
+      - 83
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.10.13
+      5: 0.15.5
+      6: 4.33.1
+      8:
+      - 5
