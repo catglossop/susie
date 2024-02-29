@@ -129,7 +129,7 @@ def load_text_encoder(
     )
 
     def tokenize(s: List[str]) -> np.ndarray:
-        return tokenizer(s, padding="max_length", return_tensors="np").input_ids
+        return tokenizer(s, padding="max_length", truncation="longest_first", return_tensors="np").input_ids
 
     untokenize = partial(tokenizer.batch_decode, skip_special_tokens=True)
 
