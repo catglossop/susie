@@ -46,9 +46,10 @@ class Transforms:
         return x
     
     @staticmethod
-    def sacson(x: Dict[str, Any]) -> Dict[str, Any]:
-        x["obs"] = x["obs"]
+    def primitives(x: Dict[str, Any]) -> Dict[str, Any]:
         x["lang"] = x["lang"]
+        del x["varied_lang"]
+        print(x)
         return x 
 class GetPaths:
     """Retrieves paths to TFRecord files or each dataset"""
@@ -66,7 +67,7 @@ class GetPaths:
         return f"{data_path}/{'train' if train else 'val'}"
 
     @staticmethod
-    def sacson(data_path: str, train: bool) -> List[str]:
+    def primitives(data_path: str, train: bool) -> List[str]:
         return f"{data_path}/{'train' if train else 'val'}"
 
     @staticmethod
@@ -93,7 +94,7 @@ def make_dataset(
     augment_kwargs: dict = {},
 ) -> dl.DLataset:
     paths = getattr(GetPaths, name)(data_path, train)
-
+    
     dataset = (
         dl.DLataset.from_tfrecords(paths)
         .map(dl.transforms.unflatten_dict)
@@ -107,7 +108,7 @@ def make_dataset(
         .unbatch()
         .shuffle(shuffle_buffer_size)
     )
-
+    
     dataset = dataset.map(
         partial(dl.transforms.decode_images, match=["curr", "goals", "subgoals"])
     ).map(
@@ -117,7 +118,8 @@ def make_dataset(
             size=(image_size, image_size),
         )
     )
-
+    examples = dataset.take(5)
+    
     if train:
         dataset = dataset.map(
             partial(
@@ -148,19 +150,21 @@ def get_data_loader(data_config, tokenize_fn, mesh=None):
     train_datasets = []
     val_datasets = []
     weights = []
+    
     for data_name, data_kwargs in data_config.items():
         data_kwargs = dict(data_kwargs)
         weights.append(float(data_kwargs.pop("weight")))
         train_datasets.append(make_dataset(data_name, train=True, **data_kwargs))
         val_datasets.append(make_dataset(data_name, train=False, **data_kwargs))
 
+    
     train = dl.DLataset.sample_from_datasets(
         train_datasets, weights=weights, stop_on_empty_dataset=True
     ).batch(batch_size, num_parallel_calls=tf.data.AUTOTUNE)
     val = dl.DLataset.sample_from_datasets(
         val_datasets, weights=weights, stop_on_empty_dataset=True
     ).batch(batch_size, num_parallel_calls=tf.data.AUTOTUNE)
-
+    
     def shard(batch):
         return multihost_utils.host_local_array_to_global_array(
             batch,
@@ -171,8 +175,9 @@ def get_data_loader(data_config, tokenize_fn, mesh=None):
     # WARNING: for some reason any amount of prefetching is also a total no-go in terms of memory usage...
     train = map(tokenize_fn, train.as_numpy_iterator())
     val = map(tokenize_fn, val.as_numpy_iterator())
-
+    
     if mesh:
+        
         return map(shard, train), map(shard, val), len(train_datasets)
     else:
         return train, val, len(train_datasets)

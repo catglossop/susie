@@ -93,7 +93,7 @@ def delta_goals(ds, *, goal_delta, subgoal_delta):
         subgoals = tf.gather(traj["obs"], subgoal_idxs, name="delta_3")
 
         extras = {k: v[:n] for k, v in traj.items() if k != "obs"}
-
+        print(subgoals)
         return {"subgoals": subgoals, "curr": curr, "goals": goals, **extras}
 
     return ds.filter(filter_fn).map(map_fn)
@@ -147,7 +147,7 @@ def subgoal_only(ds, *, subgoal_delta, truncate=False):
 
         def map_fn(traj):
             num_frames = tf.shape(traj["obs"])[0]
-
+            
             # select [0, len) to be the current obs
             curr_idxs = tf.range(num_frames)
             curr = traj["obs"]
