@@ -9,9 +9,9 @@ def base():
     # top-level stuff
     config.seed = 42
     config.wandb_project = "susie"
-    config.run_name = "susie-sacson"
-    config.logdir = "/nfs/nfs1/users/cglossop/logs"
-    config.num_steps = 40000
+    config.run_name = "susie-nav"
+    config.logdir = "gs://catg_central2/logs"
+    config.num_steps = 100000
     config.log_interval = 100
     config.save_interval = 5000
     config.val_interval = 2500
@@ -66,10 +66,10 @@ def base():
 
     # data
     config.data = ConfigDict()
-    config.data.batch_size = 32
+    config.data.batch_size = 128
 
     data_base = ConfigDict()
-    data_base.image_size = 64
+    data_base.image_size = 128
     data_base.shuffle_buffer_size = 100000
     data_base.augment_kwargs = dict(
         random_resized_crop=dict(scale=[0.85, 1.0], ratio=[0.95, 1.05]),
@@ -107,13 +107,13 @@ def base():
     #     truncate=False,
     # )
 
-    config.data.sacson = sacson = deepcopy(data_base)
-    sacson.weight = 100.0
-    sacson.data_path = "gs://sacson_data_central1/sacson_tf_w_lang_v2"
-    sacson.goal_relabeling_fn = "subgoal_only"
-    sacson.goal_relabeling_kwargs = dict(
-        subgoal_delta=(11, 14),
-        truncate=False,
+    config.data.primitives = primitives = deepcopy(data_base)
+    primitives.weight = 100.0
+    primitives.data_path = "gs://catg_central2/primitives_big"
+    primitives.goal_relabeling_fn = "subgoal_only"
+    primitives.goal_relabeling_kwargs = dict(
+        subgoal_delta=(6, 9),
+        truncate=True,
     )
 
     # config.data.calvin = calvin = deepcopy(data_base)
