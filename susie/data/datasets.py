@@ -108,7 +108,6 @@ def make_dataset(
         .unbatch()
         .shuffle(shuffle_buffer_size)
     )
-    
     dataset = dataset.map(
         partial(dl.transforms.decode_images, match=["curr", "goals", "subgoals"])
     ).map(
