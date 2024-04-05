@@ -87,6 +87,7 @@ def train_step(
     eval_only=False,
 ):
     batch_size = batch["subgoals"].shape[0]
+    
     # encode stuff
     for key in {"curr", "goals", "subgoals"}.intersection(batch.keys()):
         # VERY IMPORTANT: for some godforsaken reason, the context latents are
@@ -123,7 +124,6 @@ def train_step(
             uncond_prompt_embed,
             prompt_embeds,
         )
-    breakpoint()
     x = batch["subgoals"]  # the generation target
     y = jnp.concatenate(
         [batch["curr"], batch["goals"]], axis=-1
@@ -320,7 +320,6 @@ def main(_):
     # warm up loaders
     logging.info("Warming up data loaders...")
     next(train_loader), next(val_loader)
-
     # initialize parameters
     if pretrained_params is None or config.wandb_resume_id is not None:
         example_batch = next(train_loader)
