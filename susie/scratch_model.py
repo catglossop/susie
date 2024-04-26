@@ -141,36 +141,42 @@ def load_text_encoder(
 
     return tokenize, untokenize, partial(text_encode, text_encoder.params)
 
-# DO NOT USE PRETRAINED UNET
-# def load_pretrained_unet(
-#     path: str, in_channels: int
-# ) -> Tuple[FlaxUNet2DConditionModel, dict]:
-#     model_def, params = FlaxUNet2DConditionModel.from_pretrained(
-#         path, dtype=np.float32, subfolder="unet"
-#     )
 
-#     # same issue, they commit the params to the CPU, which totally messes stuff
-#     # up downstream...
-#     params = jax.device_get(params)
+def load_unet(
+    path: str, in_channels: int
+) -> Tuple[FlaxUNet2DConditionModel, dict]:
+    model_def, params = FlaxUNet2DConditionModel.from_pretrained(
+        path, dtype=np.float32, subfolder="unet"
+    )
+    with open(path) as json_file:
+        model_config = json.load(json_file)
+    model_def, params = FlaxUNet2DConditionModel(**model_config)
+    key1, key2 = random.split(random.key(0))
+    x = random.normal(key1, (10,)) # Dummy input data
+    params = model_def.init(key2, x) # Initialization call
+    
+    # same issue, they commit the params to the CPU, which totally messes stuff
+    # up downstream...
+    # params = jax.device_get(params)
 
-#     # add extra parameters to conv_in if necessary
-#     old_conv_in = params["conv_in"]["kernel"]
-#     h, w, cin, cout = old_conv_in.shape
-#     logging.info(f"Adding {in_channels - cin} channels to conv_in")
-#     params["conv_in"]["kernel"] = np.zeros(
-#         (h, w, in_channels, cout), dtype=old_conv_in.dtype
-#     )
-#     params["conv_in"]["kernel"][:, :, :cin, :] = old_conv_in
+    # # add extra parameters to conv_in if necessary
+    # old_conv_in = params["conv_in"]["kernel"]
+    # h, w, cin, cout = old_conv_in.shape
+    # logging.info(f"Adding {in_channels - cin} channels to conv_in")
+    # params["conv_in"]["kernel"] = np.zeros(
+    #     (h, w, in_channels, cout), dtype=old_conv_in.dtype
+    # )
+    # params["conv_in"]["kernel"][:, :, :cin, :] = old_conv_in
 
-#     # monkey-patch __call__ to use channels-last
-#     model_def.__call__ = lambda self, sample, *args, **kwargs: eo.rearrange(
-#         FlaxUNet2DConditionModel.__call__(
-#             self, eo.rearrange(sample, "b h w c -> b c h w"), *args, **kwargs
-#         ).sample,
-#         "b c h w -> b h w c",
-#     )
+    # # monkey-patch __call__ to use channels-last
+    # model_def.__call__ = lambda self, sample, *args, **kwargs: eo.rearrange(
+    #     FlaxUNet2DConditionModel.__call__(
+    #         self, eo.rearrange(sample, "b h w c -> b c h w"), *args, **kwargs
+    #     ).sample,
+    #     "b c h w -> b h w c",
+    # )
 
-#     return model_def, params
+    return model_def, params
 
 
 def create_sample_fn(
