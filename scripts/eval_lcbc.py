@@ -26,7 +26,7 @@ NO_PITCH_ROLL = False
 NO_YAW = False
 STICKY_GRIPPER_NUM_STEPS = 2
 ENV_PARAMS = {
-    "camera_topics": [{"name": "/blue/image_raw", "flip": False}],
+    "camera_topics": [{"name": "/front/image_raw", "flip": False}],
     "return_full_image": False,
     # toysink2
     "override_workspace_boundaries": [
